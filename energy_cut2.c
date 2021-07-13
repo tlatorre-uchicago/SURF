@@ -53,22 +53,16 @@ int energy_cut2(const char* in_file, const char* out_file_max, double max_energy
             event_energy+=brEnergy->at(j);
             hits++;
         }
-        
-        if (event_energy/(brChannelID->size()) >= avg_energy) {
-            newtree_avg->Fill();
-        }
     }
-    h->Draw();
     
     //Write out the file with energy cuts applied
     nfmax->Write();
-    */
     return 0;
 }
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
-        printf("Three arguments are expected. Input file string, output file strings, and a double for the energy of the maximum hit.m event.);
+        printf("Three arguments are expected. Input file string, output file strings, and a double for the energy of the maximum hit event.");
         printf("%d arguments were supplied.\n", argc);
         exit(1);
     }
