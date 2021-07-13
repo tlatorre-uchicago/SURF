@@ -20,7 +20,7 @@ std::vector<unsigned int>	*brChannelID;
 std::vector<float>	        *brEnergy;
 
 
-void all_sipm_pair_time_differences(const char* in_file, const char* out_file) {
+void all_sipm_pair_time_differences(const char* in_file, const char* out_file, double energy_threshold) {
     
     /*Retrieve the filename
     char filename[100];    
@@ -86,7 +86,7 @@ void all_sipm_pair_time_differences(const char* in_file, const char* out_file) {
                     time_second = brTime->at(index_second);
                     int energy_second = brEnergy->at(index_second);
                     //Add the difference in times of the hits to that channel pairs histogram
-                    if (energy_first > 40 && energy_second > 40) {
+                    if (energy_first > energy_threshold && energy_second > energy_threshold) {
                     tdh[m]->Fill(time_first - time_second);
                     }
                 }
@@ -94,15 +94,17 @@ void all_sipm_pair_time_differences(const char* in_file, const char* out_file) {
         }
     }
     
-    /*
-    char fullname[128];
-    cout << "\nChoose a name for the histogram file with the root extension: ";
-    cin >> fullname;
-    */    
     TFile *f = new TFile(out_file, "RECREATE");
-    
     
     for (int h=0; h<16; h++) {
         tdh[h]->Write();
     } 
+}
+
+int main(int argc, char* argv[]) {
+    if (argc != 4) {
+        printf("Three arguments required: an input filename and output filename, and energy threshold double for included hits.");
+        all_sipm_pair_time_differences(argv[1], argv[2], atof(argv[3]));
+    }
+    return 0;
 }
