@@ -5,3 +5,7 @@ energy_cut2: energy_cut2.c
 
 all_sipm_pair_time_differences: all_sipm_pair_time_differences.c
 	g++ -o all_sipm_pair_time_differences all_sipm_pair_time_differences.c `root-config --cflags --libs`
+
+twod_channel_coincidence: twod_channel_coincidence.c
+	g++ -o twod_channel_coincidence twod_channel_coincidence.c `root-config --cflags --libs`
+
