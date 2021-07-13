@@ -97,8 +97,10 @@ void all_sipm_pair_time_differences(const char* in_file, const char* out_file, d
     TFile *f = new TFile(out_file, "RECREATE");
     
     for (int h=0; h<16; h++) {
+        tdh[h]->Fit("gaus");
         tdh[h]->Write();
     } 
+    f->Close();
 }
 
 int main(int argc, char* argv[]) {
