@@ -1,4 +1,4 @@
-all: energy_cut2
+all: energy_cut2 all_sipm_pair_time_differences twod_channel_coincidence
 
 energy_cut2: energy_cut2.c
 	g++ -o energy_cut2 energy_cut2.c `root-config --cflags --libs`

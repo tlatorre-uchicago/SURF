@@ -9,9 +9,10 @@
 
 std::vector<unsigned int>	*brChannelID;
 std::vector<float>	        *brEnergy;
+std::vector<float>          *brQT1;
 
 
-int energy_cut2(const char* in_file, const char* out_file_max, double max_energy) {
+int energy_cut2(const char* in_file, const char* out_file, double max_energy) {
     
     //Open the data from the input root file/TTree
     TFile *foo = new TFile(in_file);
@@ -21,18 +22,11 @@ int energy_cut2(const char* in_file, const char* out_file_max, double max_energy
     //Access data and assign addresses
     unsigned int n = T->GetEntries();
 
-    T->SetBranchAddress("channelID", &brChannelID);
     T->SetBranchAddress("energy", &brEnergy);
-    
-    
-    unsigned int channelID;
-    float energy;
-    int count_sum = 0;
-    int count_avg = 0;
     
     //Create the output file for the energy cut by max hit energy
     
-    TFile *nfmax = new TFile(out_file_max, "RECREATE");
+    TFile *nfmax = new TFile(out_file, "RECREATE");
     TTree *newtree_max;
     newtree_max = T->CloneTree(0);
 
@@ -48,10 +42,8 @@ int energy_cut2(const char* in_file, const char* out_file_max, double max_energy
         float event_energy=0;
         float max_hit_energy = *std::max_element(brEnergy->begin(), brEnergy->end());
         
-        //Loop through the hits in an event
-        for (int j=0; j<brChannelID->size(); j++) {
-            event_energy+=brEnergy->at(j);
-            hits++;
+        if (max_hit_energy >= max_energy) {
+            newtree_max->Fill();
         }
     }
     
