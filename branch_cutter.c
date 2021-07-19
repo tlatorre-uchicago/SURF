@@ -14,8 +14,6 @@ int branch_cutter(const char* in_file, const char* out_file) {
     TFile *output = TFile::Open(out_file, "RECREATE");
 
     //Clear the undesired branches
-    input_tree->SetBranchStatus("step1", 0);
-    input_tree->SetBranchStatus("step2", 0);
     input_tree->SetBranchStatus("prevEventFlags", 0);
     input_tree->SetBranchStatus("prevEventTime", 0);
     input_tree->SetBranchStatus("timeLast", 0);
