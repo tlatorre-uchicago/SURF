@@ -10,5 +10,5 @@ twod_channel_coincidence: twod_channel_coincidence.c
 	g++ -o twod_channel_coincidence twod_channel_coincidence.c `root-config --cflags --libs`
 
 branch_cutter: branch_cutter.c
-	g++ -o branch_cutter branch_cutter.c `root-config -cflags -libs`
+	g++ -o branch_cutter branch_cutter.c `root-config --cflags --libs`
 
