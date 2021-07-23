@@ -103,7 +103,7 @@ void all_sipm_pair_time_differences(const char* in_file, const char* out_file, d
     f->Close();
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) /*commit with new if statement*/{
     if (argc != 4) {
         printf("Three arguments required: an input filename and output filename, and energy threshold double for included hits.");
         all_sipm_pair_time_differences(argv[1], argv[2], atof(argv[3]));
