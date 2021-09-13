@@ -12,8 +12,10 @@ std::vector<float>	        *brEnergy;
 std::vector<float>          *brQT1;
 
 
-int energy_cut2(const char* in_file, const char* out_file, double max_energy) {
-    
+int energy_cut2(const char* in_file, const char* out_file, double max_energy)
+{
+    int i;
+
     //Open the data from the input root file/TTree
     TFile *foo = new TFile(in_file);
     TTree *T;
@@ -30,25 +32,30 @@ int energy_cut2(const char* in_file, const char* out_file, double max_energy) {
     TTree *newtree_max;
     newtree_max = T->CloneTree(0);
 
-    int hits = 0;
-
     //Loop through each event
-    for (int i=0; i<n; i++) {
+    for (i = 0; i < n; i++) {
         if (i % 100==0) {
             printf("\r%d/%d",i,n);
             fflush(stdout);
         }
         T->GetEntry(i);
-        float event_energy=0;
         float max_hit_energy = *std::max_element(brEnergy->begin(), brEnergy->end());
         
         if (max_hit_energy >= max_energy) {
             newtree_max->Fill();
         }
     }
+    printf("\r%d/%d\n",i,n);
+    fflush(stdout);
     
     //Write out the file with energy cuts applied
     nfmax->Write();
+    nfmax->Close();
+    delete nfmax;
+
+    foo->Close();
+    delete foo;
+
     return 0;
 }
 
