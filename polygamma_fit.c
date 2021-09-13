@@ -380,7 +380,7 @@ int main(int argc, char* argv[]) {
     
     //Apply user defined fit
     //TF2 *f2d = new TF2("f2d", "sqrt([0]**2 + ([1]*(y-[3])/(x**[2]))**2)");
-    TF2 *fp = new TF2("fp", poly_func, xlow, xhigh, ylow, yhigh, 4, 2);
+    TF2 *fp = new TF2("fp", poly_func, xlow, xhigh, ylow, yhigh, 4);
     fp->SetMinimum(zlow);
     fp->SetMinimum(zhigh);
     

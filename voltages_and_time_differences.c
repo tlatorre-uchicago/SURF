@@ -14,6 +14,7 @@
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
 #include <TF1.h>
+#include <algorithm>
 
 
 std::vector<float>		*brEnergy;

@@ -9,6 +9,7 @@
 #include <TApplication.h>
 #include <TCanvas.h>
 #include <TF1.h>
+#include <algorithm>
 
 
 std::vector<float>		*brEnergy;

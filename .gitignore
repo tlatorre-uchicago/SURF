@@ -1,0 +1,9 @@
+*.o
+*.swp
+energy_cut2
+all_sipm_pair_time_differences
+twod_channel_coincidence
+branch_cutter
+voltages_and_time_differences
+peak_energy_and_over_voltage
+polygamma_fit
