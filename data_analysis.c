@@ -60,28 +60,44 @@ Double_t poly_func(Double_t *val, Double_t *par) {
     return f;
 }
 
+static void usage(void) {
+    fprintf(stderr,
+"data_analysis"
+"\n"
+"  --infile <filename>   Input filename.\n"
+"  --nfiles <number>     Number of files.\n"
+"  --outfile <filename>  Output filename.\n"
+"  --help                Output this help and exit.\n"
+"\n");
+    exit(1);
+}
 
-int main(int argc, char* argv[]) {
-    char infile[256];
-    char outfile[256];
-    int nfiles;
+
+int main(int argc, char* argv[])
+{
+    char *infile = NULL;
+    char *outfile = NULL;
+    int nfiles = 0;
     for (int i=1; i<argc; i++) {
 	if (strcmp(argv[i], "--infile") == 0) {
 	    i++;
-	    strcpy(infile, argv[i]);
+            infile = argv[i];
 	    printf("Extracting data from %s\n", infile);
-	}
-	if (strcmp(argv[i], "--outfile") == 0) {
+	} else if (strcmp(argv[i], "--outfile") == 0) {
 	   i++;
-	   strcpy(outfile, argv[i]);
+	   outfile = argv[i];
 	   printf("Outputting to %s\n", outfile);
-	}
-	if (strcmp(argv[i], "--nfiles") == 0) {
+	} else if (strcmp(argv[i], "--nfiles") == 0) {
 	   i++;
 	   nfiles = atoi(argv[i]);
+	} else if (strcmp(argv[i], "--help") == 0) {
+            usage();
 	}
     }
-	
+
+    if (infile == NULL || outfile == NULL || nfiles == 0)
+        usage();
+
     //Initialize 2d data and error arrays
     double xtemp[512];	//laser energy
     double ytemp[512];	//vth
@@ -206,6 +222,7 @@ int main(int argc, char* argv[]) {
 	    fit_points++;
 	}
     }
+    printf("fit points = %i\n", fit_points);
     TGraph2DErrors *gr = new TGraph2DErrors(fit_points, fitx, fity, fitz, fitex, fitey, fitez);
     TAxis *xaxis = gr->GetXaxis();
     TAxis *yaxis = gr->GetYaxis();
@@ -346,8 +363,12 @@ int main(int argc, char* argv[]) {
 	g->Add(measured);
 	g->Add(predicted);
 	g->SetTitle(graph_title);
-	g->GetXaxis()->SetTitle("Laser Energy (MeV)");
-	g->GetYaxis()->SetTitle("Time Difference Resolution");
+        /* Can't set the axis titles directly due to
+         * https://root-forum.cern.ch/t/tmultigraph-getxaxis-settitle-version-4-01/3928/5,
+         * so instead we set them via the SetTitle() command. */
+	g->SetTitle(";Laser Energy (MeV);Time Difference Resolution (ps)");
+	//g->GetXaxis()->SetTitle("Laser Energy (MeV)");
+	//g->GetYaxis()->SetTitle("Time Difference Resolution");
 	g->Write();
 	TLegend *leg = new TLegend(0.1,0.7, 0.3, 0.9);
 	leg->SetNColumns(2);
@@ -371,13 +392,18 @@ int main(int argc, char* argv[]) {
     }
 
     printf("The parameters are p0:%f, p1:%f, p2:%f, p3:%f, p4:%f", p0poly ,p1poly, p2poly, p3poly, p4poly);
-    mg->GetXaxis()->SetTitle("Laser Energy (MeV)");
-    mg->GetYaxis()->SetTitle("Time Difference Resolution (Ps)");
+    mg->SetTitle(";Laser Energy (MeV);Time Difference Resolution (ps)");
+    //mg->GetXaxis()->SetTitle("Laser Energy (MeV)");
+    //mg->GetYaxis()->SetTitle("Time Difference Resolution (Ps)");
     mg->Write();
 
-    printf("\n\nThere are %d vths", vcount);
+    printf("\n\nThere are %d vths\n", vcount);
     //c1->BuildLegend();
+
+    delete fp;
+    delete gr;
     foo->Close();
+    delete foo;
     
 
     return 0;
