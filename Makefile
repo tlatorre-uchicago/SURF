@@ -1,5 +1,5 @@
 #all: energy_cut2 all_sipm_pair_time_differences twod_channel_coincidence branch_cutter voltages_and_time_differences peak_energy_and_over_voltage energy_threshold_resolution_fit polygamma_fit
-all: energy_cut2 all_sipm_pair_time_differences twod_channel_coincidence branch_cutter voltages_and_time_differences peak_energy_and_over_voltage polygamma_fit
+all: energy_cut2 all_sipm_pair_time_differences twod_channel_coincidence branch_cutter voltages_and_time_differences peak_energy_and_over_voltage polygamma_fit data_analysis data_extractor
 
 OPTIMIZATION?=-O0
 CFLAGS=$(OPTIMIZATION) -Wall -g $(shell root-config --cflags)

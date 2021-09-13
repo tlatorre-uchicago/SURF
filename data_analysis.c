@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
     gr->SetTitle("Laser Intensity and Threshold Voltage vs. Timing Resolution;Laser Energy (MeV);Threshold Voltage (V);Timing Resolution (Ps)");
     
     //Apply user defined fit
-    TF2 *fp = new TF2("fp", poly_func, xlow, xhigh, ylow, yhigh, 5, 2);
+    TF2 *fp = new TF2("fp", poly_func, xlow, xhigh, ylow, yhigh, 5);
     fp->SetMinimum(zlow);
     fp->SetMinimum(zhigh);
     
