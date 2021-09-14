@@ -27,7 +27,8 @@ float brStep2;
 //Function to find the median of a histogram
 //This will be used as a starting point for the mean parameter
 //of the Gaussian fits at the end of main
-double Median(const TH1D * h1) {
+double Median(const TH1D * h1)
+{
     int n = h1->GetXaxis()->GetNbins();
     std::vector<double> x(n);
     h1->GetXaxis()->GetCenter( &x[0] );
@@ -42,7 +43,8 @@ struct s {
 };
 
 
-int cmp(const void *a, const void *b) {
+int cmp(const void *a, const void *b)
+{
     struct s *a1 = (struct s *)a;
     struct s *a2 = (struct s *)b;
     if ((*a1).value > (*a2).value)
@@ -54,7 +56,8 @@ int cmp(const void *a, const void *b) {
 }
 
 
-Double_t poly_func(Double_t *val, Double_t *par) {
+Double_t poly_func(Double_t *val, Double_t *par)
+{
     Double_t x = val[0];
     Double_t y = val[1];
     double n = x*par[1];
@@ -67,7 +70,8 @@ Double_t poly_func(Double_t *val, Double_t *par) {
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     int i = 0;
     double ov;
     int bar;
@@ -304,12 +308,12 @@ int main(int argc, char* argv[]) {
 	    //Get the means of the energy plots
 	    int low = floor(Median(epeaks[k]) - 20);
 	    int high = floor(Median(epeaks[k]) + 21);
-	    TF1 *f1 = new TF1("f1", "gaus");
-	    f1->SetRange(low, high);
-	    f1->SetParameter(1, Median(epeaks[k]));
+	    TF1 f1("f1", "gaus");
+	    f1.SetRange(low, high);
+	    f1.SetParameter(1, Median(epeaks[k]));
 	    epeaks[k]->Fit("f1", "R");
-	    x[k + num_points] = f1->GetParameter(1) / 74.74 * 1.27;
-	    ex[k + num_points]  = f1->GetParError(1) / 74.74 * 1.27;
+	    x[k + num_points] = f1.GetParameter(1) / 74.74 * 1.27;
+	    ex[k + num_points]  = f1.GetParError(1) / 74.74 * 1.27;
 	    printf("The %dth energy peak (vth=%f) is %f\n\n", k+1, unique_vths[k], x[k+num_points]);
 	    printf("The median energy is %f\n", Median(epeaks[k]));
 
@@ -320,16 +324,21 @@ int main(int argc, char* argv[]) {
 
 
 	    //Get the standard deviations of the timing difference plots
-	    TF1 *f2 = new TF1("f2", "gaus");
+	    TF1 f2("f2", "gaus");
 	    tdh[k]->Fit("f2");
-	    z[k + num_points] = f2->GetParameter(2);
-	    ez[k + num_points] = f2->GetParError(2);
+	    z[k + num_points] = f2.GetParameter(2);
+	    ez[k + num_points] = f2.GetParError(2);
 	    printf("The %dth timing resolution (vth=%f) is %f\n\n", k+1, unique_vths[k], z[k+num_points]);
 	}
 
+	for (int k = 0; k < good_indices; k++) {
+	    delete tdh[k];
+	    delete epeaks[k];
+	}
 
 	num_points += good_indices;
 	foo->Close();
+        delete foo;
     }
 
     //Find the data extrema so appropriate bounds can be set for plotting
@@ -380,12 +389,12 @@ int main(int argc, char* argv[]) {
     
     //Apply user defined fit
     //TF2 *f2d = new TF2("f2d", "sqrt([0]**2 + ([1]*(y-[3])/(x**[2]))**2)");
-    TF2 *fp = new TF2("fp", poly_func, xlow, xhigh, ylow, yhigh, 4);
-    fp->SetMinimum(zlow);
-    fp->SetMinimum(zhigh);
+    TF2 fp("fp", poly_func, xlow, xhigh, ylow, yhigh, 4);
+    fp.SetMinimum(zlow);
+    fp.SetMinimum(zhigh);
     
-    fp->SetParameters(100,1000,0.1,60);
-    fp->SetParNames("p0","p1","p2","p3");
+    fp.SetParameters(100,1000,0.1,60);
+    fp.SetParNames("p0","p1","p2","p3");
 
     gr->Fit("fp", "RV");
     gr->Draw("surf2");
@@ -403,15 +412,15 @@ int main(int argc, char* argv[]) {
     p3err = f2d->GetParError(3);
     */
 
-    double p0poly = fp->GetParameter(0);
-    double p1poly = fp->GetParameter(1);
-    double p2poly = fp->GetParameter(2);
-    double p3poly = fp->GetParameter(3);
-    double p0polyerr = fp->GetParError(0);
-    double p1polyerr = fp->GetParError(1);
-    double p2polyerr = fp->GetParError(2);
-    double p3polyerr = fp->GetParError(3);
-    fp->Draw("same");
+    double p0poly = fp.GetParameter(0);
+    double p1poly = fp.GetParameter(1);
+    double p2poly = fp.GetParameter(2);
+    double p3poly = fp.GetParameter(3);
+    double p0polyerr = fp.GetParError(0);
+    double p1polyerr = fp.GetParError(1);
+    double p2polyerr = fp.GetParError(2);
+    double p3polyerr = fp.GetParError(3);
+    fp.Draw("same");
 
     //f2d->Draw("SAME");
     gr->Write();
@@ -454,7 +463,7 @@ int main(int argc, char* argv[]) {
     }
     
     //Make the multigraph with energy vs resolution at each vth
-    TMultiGraph *mg = new TMultiGraph();
+    TMultiGraph mg;
     for (int i=0; i<num_vths; i++) {
 	int points = num_points/nfiles;
 	double mgx[points];
@@ -541,17 +550,18 @@ int main(int argc, char* argv[]) {
 	int color = floor(100*i/num_vths) + 1;
 	mgr->SetLineColor(color);
 	gr->SetMarkerStyle(20+i);
-	mg->Add(mgr);
-	mg->Draw();	
+	mg.Add(mgr);
+	mg.Draw();	
     }
 
     printf("The parameters are p0:%f, p1:%f, p2:%f, p3:%f", p0poly ,p1poly, p2poly, p3poly);
-    mg->GetXaxis()->SetTitle("Laser Energy (MeV)");
-    mg->GetYaxis()->SetTitle("Time Difference Resolution (Ps)");
-    mg->Write();
+    mg.GetXaxis()->SetTitle("Laser Energy (MeV)");
+    mg.GetYaxis()->SetTitle("Time Difference Resolution (Ps)");
+    mg.Write();
     c1->BuildLegend();
+
     foo->Close();
-    
+    delete foo;
 
     return 0;
 }

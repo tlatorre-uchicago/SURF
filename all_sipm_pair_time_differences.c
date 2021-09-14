@@ -37,13 +37,11 @@ void all_sipm_pair_time_differences(const char* in_file, const char* out_file, d
     T->SetBranchAddress("channelID", &brChannelID);
     T->SetBranchAddress("energy", &brEnergy);
     
-    unsigned int channelID;
     int time_first;
     int time_second;
     
     // Number of events in the TTree. 
     unsigned int n = T->GetEntries();
-    double hist_std_devs[16];
     
     //Make 16 histograms, one for each channel pair
     int pairs[16][2];
@@ -100,11 +98,15 @@ void all_sipm_pair_time_differences(const char* in_file, const char* out_file, d
     for (int h=0; h<16; h++) {
         tdh[h]->Fit("gaus");
         tdh[h]->Write();
+        delete tdh[h];
     } 
+
     f->Close();
+    delete f;
 }
 
-int main(int argc, char* argv[]) /*commit with new if statement*/{
+int main(int argc, char* argv[])
+{
     if (argc != 4) {
         printf("Three arguments required: an input filename and output filename, and energy threshold double for included hits.");
         exit(1);

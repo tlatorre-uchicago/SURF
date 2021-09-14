@@ -188,6 +188,7 @@ int voltages_and_time_differences(const char* in_file, const char* out_file, int
  
     
     f->Close();
+    delete f;
 
 
     TApplication *theApp = new TApplication("App",0,0);
@@ -229,6 +230,8 @@ int voltages_and_time_differences(const char* in_file, const char* out_file, int
     theApp->Run();
     theApp->Terminate();
 
+    foo->Close();
+    delete foo;
 
     return 0;
 }

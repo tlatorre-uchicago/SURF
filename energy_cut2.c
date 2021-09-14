@@ -50,6 +50,7 @@ int energy_cut2(const char* in_file, const char* out_file, double max_energy)
     
     //Write out the file with energy cuts applied
     nfmax->Write();
+
     nfmax->Close();
     delete nfmax;
 
@@ -61,8 +62,8 @@ int energy_cut2(const char* in_file, const char* out_file, double max_energy)
 
 int main(int argc, char* argv[]) {
     if (argc != 4) {
-        printf("Three arguments are expected. Input file string, output file strings, and a double for the energy of the maximum hit event.");
-        printf("%d arguments were supplied.\n", argc);
+        fprintf(stderr, "Three arguments are expected. Input file string, output file strings, and a double for the energy of the maximum hit event.");
+        fprintf(stderr, "%d arguments were supplied.\n", argc);
         exit(1);
     }
     energy_cut2(argv[1], argv[2], atof(argv[3]));

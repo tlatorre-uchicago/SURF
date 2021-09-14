@@ -3,8 +3,8 @@
 #include <vector>
 #include <stdio.h>
 
-int branch_cutter(const char* in_file, const char* out_file) {
-
+int branch_cutter(const char* in_file, const char* out_file)
+{
     //Access the input file and the TTree to be trimmed
     TFile *input = TFile::Open(in_file);
     TTree *input_tree;
@@ -33,16 +33,21 @@ int branch_cutter(const char* in_file, const char* out_file) {
     //Write the trimmed TTree to the output file
     TTree *output_tree = input_tree->CloneTree(-1,"fast");
     output->Write();
-    delete input;
+
+    output->Close();
+    input->Close();
+
     delete output;
+    delete input;
 
     return 0;
 }
 
-
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     if (argc != 3) {
-	printf("Two arguments are required, an input file name, and an output file name.");
+	fprintf(stderr, "Two arguments are required, an input file name, and an output file name.");
+        exit(1);
     }
     branch_cutter(argv[1], argv[2]);
     return 0;

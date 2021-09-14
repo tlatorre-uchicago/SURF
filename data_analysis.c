@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
     gr->SetMaximum(zhigh);
 
     //Edit plot labels
-    gr->SetTitle("Laser Intensity and Threshold Voltage vs. Timing Resolution;Laser Energy (MeV);Threshold Voltage (V);Timing Resolution (Ps)");
+    gr->SetTitle("Laser Intensity and Threshold Voltage vs. Timing Resolution;Effective Energy (MeV);Threshold Voltage (V);Timing Resolution (Ps)");
     
     //Apply user defined fit
     TF2 *fp = new TF2("fp", poly_func, xlow, xhigh, ylow, yhigh, 5);
@@ -296,6 +296,9 @@ int main(int argc, char* argv[])
         sorted_vth[i] = y[t];
     }
     
+    TLegend *l = new TLegend(0.7, 0.5, 0.87, 0.87);
+    l->SetFillColor(0);
+
     //Make the multigraph with energy vs resolution at each vth
     TMultiGraph *mg = new TMultiGraph();
     for (int i=0; i<vcount; i++) {
@@ -366,7 +369,7 @@ int main(int argc, char* argv[])
         /* Can't set the axis titles directly due to
          * https://root-forum.cern.ch/t/tmultigraph-getxaxis-settitle-version-4-01/3928/5,
          * so instead we set them via the SetTitle() command. */
-	g->SetTitle(";Laser Energy (MeV);Time Difference Resolution (ps)");
+	g->SetTitle(";Effective Energy (MeV);Time Difference Resolution (ps)");
 	//g->GetXaxis()->SetTitle("Laser Energy (MeV)");
 	//g->GetYaxis()->SetTitle("Time Difference Resolution");
 	g->Write();
@@ -382,20 +385,28 @@ int main(int argc, char* argv[])
 
 	TGraphErrors *mgr = new TGraphErrors(points_added, mgx, mgy, mgex, mgey);   //In these x is energy and y is time resolution
 	char mgraphname[256];
-	sprintf(mgraphname, "DAC Threshold %f", unique_vths[i]);
+	sprintf(mgraphname, "DAC Threshold %.0f", unique_vths[i]);
 	mgr->SetName(mgraphname);
 	mgr->SetTitle(mgraphname);
 	int color = floor(100*i/vcount) + 1;
 	mgr->SetLineColor(color);
 	gr->SetMarkerStyle(20+i);
-	mg->Add(mgr);	
+        if ((int) unique_vths[i] == 4 || (int) unique_vths[i] == 10 || (int) unique_vths[i] == 20 || (int) unique_vths[i] == 30 || (int) unique_vths[i] == 40 || (int) unique_vths[i] == 50) {
+            mg->Add(mgr);
+            l->AddEntry(mgr, mgraphname, "lp");
+        }
     }
 
     printf("The parameters are p0:%f, p1:%f, p2:%f, p3:%f, p4:%f", p0poly ,p1poly, p2poly, p3poly, p4poly);
-    mg->SetTitle(";Laser Energy (MeV);Time Difference Resolution (ps)");
+    mg->SetTitle(";Effective Energy (MeV);Time Difference Resolution (ps)");
     //mg->GetXaxis()->SetTitle("Laser Energy (MeV)");
     //mg->GetYaxis()->SetTitle("Time Difference Resolution (Ps)");
+    TCanvas *c = new TCanvas("c1");
+    mg->Draw("apl");
+    l->Draw();
     mg->Write();
+    l->Write();
+    c->SaveAs("hist.pdf","pdf");
 
     printf("\n\nThere are %d vths\n", vcount);
     //c1->BuildLegend();
