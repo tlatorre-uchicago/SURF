@@ -7,3 +7,6 @@ branch_cutter
 voltages_and_time_differences
 peak_energy_and_over_voltage
 polygamma_fit
+data_analysis
+data_extractor
+*.root
