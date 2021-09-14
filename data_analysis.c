@@ -106,37 +106,59 @@ int main(int argc, char* argv[])
     double eytemp[512];
     double eztemp[512];
 
+    FILE *myFile = fopen(infile,"r");
 
-    ifstream myFile;
-    myFile.open(infile);
+    if (!myFile) {
+        fprintf(stderr, "error opening file '%s'\n", infile);
+        exit(1);
+    }
+
+    char line[1024];
     int counter = 0; 
     int lines = 0;
-    while (myFile.good()) {
-        string line;
-        getline(myFile, line, ',');
-        double dat = ::atof(line.c_str());
-        if (counter%7 == 0)    lines++;
-        if (counter%7 == 0) {
-            xtemp[lines - 1] = dat;
+    while (fgets(line,1024,myFile)) {
+        if (lines == 0) {
+            lines += 1;
+            continue;
         }
-        if (counter%7 == 1) {
-            ytemp[lines - 1] = dat;
+
+        printf("line = %s\n", line);
+
+        char *tok = strtok(line, ",");
+        counter = 0;
+        while (tok) { 
+            double dat = atof(tok);
+
+            switch (counter % 7) {
+            case 0:
+                xtemp[lines - 1] = dat;
+                break;
+            case 1:
+                ytemp[lines - 1] = dat;
+                break;
+            case 2:
+                ztemp[lines - 1] = dat;
+                break;
+            case 3:
+                extemp[lines - 1] = dat;
+                break;
+            case 4:
+                eytemp[lines - 1] = dat;
+                break;
+            case 5:
+                eztemp[lines - 1] = dat;
+                break;
+            }
+
+            counter++;
+            tok = strtok(NULL, ",");
         }
-        if (counter%7 == 2) {
-            ztemp[lines - 1] = dat;
-        }
-        if (counter%7 == 3) {
-            extemp[lines - 1] = dat;
-        }
-        if (counter%7 == 4) {
-            eytemp[lines - 1] = dat;
-        }
-        if (counter%7 == 5) {
-            eztemp[lines - 1] = dat;
-        }
-    counter++;
+
+        lines += 1;
     }
-    myFile.close();
+
+    fclose(myFile);
+
     int num_points = lines - 2;
 
     double x[num_points];

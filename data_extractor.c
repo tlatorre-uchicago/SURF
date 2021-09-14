@@ -288,9 +288,9 @@ int main(int argc, char* argv[]) {
     
     ofstream output;
     output.open(outfile);
-    output << "Energy (MeV)" << "," << "VTH1 (ADC units)" << "," << "Time Width Resolution (Ps)" << "," << "Energy Uncertainty" << "," << "VTH1 Uncertainty" << "," << "Time Width Uncertainty (Ps)" << "," << "Over Voltage (V)" << "," << endl;
+    output << "Energy (MeV)" << "," << "VTH1 (ADC units)" << "," << "Time Width Resolution (Ps)" << "," << "Energy Uncertainty" << "," << "VTH1 Uncertainty" << "," << "Time Width Uncertainty (Ps)" << "," << "Over Voltage (V)" << endl;
     for (int i=0; i<num_points; i++) {
-        output << x[i] << "," << y[i] <<"," << z[i] << "," << ex[i] << "," << ey[i] << "," << ez[i] << "," << ov << "," << endl;    
+        output << x[i] << "," << y[i] <<"," << z[i] << "," << ex[i] << "," << ey[i] << "," << ez[i] << "," << ov << endl;
     }
     
     return 0;
