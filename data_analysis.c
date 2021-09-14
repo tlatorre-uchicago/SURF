@@ -65,7 +65,6 @@ static void usage(void) {
 "data_analysis"
 "\n"
 "  --infile <filename>   Input filename.\n"
-"  --nfiles <number>     Number of files.\n"
 "  --outfile <filename>  Output filename.\n"
 "  --help                Output this help and exit.\n"
 "\n");
@@ -87,15 +86,12 @@ int main(int argc, char* argv[])
 	   i++;
 	   outfile = argv[i];
 	   printf("Outputting to %s\n", outfile);
-	} else if (strcmp(argv[i], "--nfiles") == 0) {
-	   i++;
-	   nfiles = atoi(argv[i]);
 	} else if (strcmp(argv[i], "--help") == 0) {
             usage();
 	}
     }
 
-    if (infile == NULL || outfile == NULL || nfiles == 0)
+    if (infile == NULL || outfile == NULL)
         usage();
 
     //Initialize 2d data and error arrays
@@ -121,8 +117,6 @@ int main(int argc, char* argv[])
             lines += 1;
             continue;
         }
-
-        printf("line = %s\n", line);
 
         char *tok = strtok(line, ",");
         counter = 0;
@@ -159,7 +153,7 @@ int main(int argc, char* argv[])
 
     fclose(myFile);
 
-    int num_points = lines - 2;
+    int num_points = lines - 1;
 
     double x[num_points];
     double y[num_points];
@@ -173,15 +167,22 @@ int main(int argc, char* argv[])
 
 
     for (int i=0; i<num_points; i++) {
-       	x[i] = xtemp[i+1];
-	y[i] = ytemp[i+1];
-	z[i] = ztemp[i+1];
-	ex[i] = extemp[i+1];
-	ey[i] = eytemp[i+1];
-	ez[i] = eztemp[i+1];
+       	x[i] = xtemp[i];
+	y[i] = ytemp[i];
+	z[i] = ztemp[i];
+	ex[i] = extemp[i];
+	ey[i] = eytemp[i];
+	ez[i] = eztemp[i];
 	global_vths.insert(y[i]);
     }
 
+    if (num_points % global_vths.size()) {
+        fprintf(stderr, "number of points %i is not a multiple of the number of thresholds %zu\n", num_points, global_vths.size());
+        fprintf(stderr, "unable to determine the number of files\n");
+        exit(1);
+    }
+
+    nfiles = num_points/global_vths.size();
 
     float unique_vths[128];
     int vcount = 0;
